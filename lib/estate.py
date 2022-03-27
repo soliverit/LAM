@@ -5,12 +5,22 @@ from json 			import loads
 from .site			import Site
 from .print_helper	import PrintHelper as P
 class Estate():
-	def __init__(self, name, manager):
-		self.name		= name
-		self.manager	= manager
-		self.sites	= []
+	##
+	# name:		Name of the Estate e.g: Ollie's novelty origami ashtrays limited
+	##
+	def __init__(self, name):
+		self.name					= name
+		self.sites					= []
+	### Add stuff ###
+	##
+	# site:		Site()
+	##
 	def addSite(self, site):
 		self.sites.append(site)
+	### Filters etc ###
+	##
+	# WARNING: Ok, a dirty fix for the dev test data.
+	##
 	def filterDuplicateSites(self):
 		sites		= {}
 		filtered	= []
@@ -19,11 +29,16 @@ class Estate():
 		for key in list(sites):
 			filtered.append(sites[key])
 		self.sites	= filtered
-	
+	### State update stuff ###
 	def takeReadings(self):
 		for site in self.sites:
 			site.takeReadings()
+	### Printing etc ###
+	##
+	# Print a summary of the Site's asset states.
+	##
 	def summary(self):
+		## Headers: The PrintHelper.formatArray method doesn't ask for headers. It's lazy, I'm lazy...
 		sites	= [["Name", "Area", "CO2(broken/aging)", "Temp(broken/aging)", "Luminaires(broken/aging)"]]
 		for site in self.sites:
 			## Luminaires
@@ -59,6 +74,14 @@ class Estate():
 			
 			sites.append([site.name[0: 40],str(int(site.area)) + "m²", co2String, thermometerString, luminaireString])
 		P.formatArray(sites)
+	##
+	# Parse JSON (Static)
+	#
+	#	Parse the training dataset that's kind of just SBEM
+	#	models with assets.
+	#
+	#	returns Estate
+	##
 	@staticmethod
 	def ParseJSON(path):
 		estate	= Estate("Estate from: " + path)
